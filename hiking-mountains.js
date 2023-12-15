@@ -46,13 +46,53 @@ function findStarts(matrix) {
 }
 
 function findNeighbors(node, matrix) {
-    // Don't forget to include diagonal neighbors!!!
+    let neighbors = [];
+    let xCod = node[0];
+    let yCod = node[1];
+    let rows = matrix.length;
+    let cols = matrix[0].length;
 
-    // Your code here 
+
+    const isValidCoord = (x, y) => x >= 0 && x < rows && y >= 0 && y < cols;
+
+
+    for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) continue;
+
+            const newX = xCod + i;
+            const newY = yCod + j;
+
+            if (isValidCoord(newX, newY) && Math.abs(matrix[newX][newY] - matrix[xCod][yCod]) <= 1) {
+                neighbors.push([newX, newY]);
+            }
+        }
+    }
+
+    return neighbors;
 }
 
 function pathTraversal(node, matrix, visited, peak) {
-    // Your code here 
+    // Your code here
+    let queue = [node];
+    visited.add(node.toString());
+
+    while (queue.length > 0) {
+        let currNode = queue.shift();
+        if (matrix[currNode[0]][currNode[1]] === peak) {
+            return true;
+        }
+
+        let neighbors = findNeighbors(currNode, matrix); // Use current node
+        neighbors.forEach((neighbor) => {
+            let neighborKey = neighbor.toString();
+            if (!visited.has(neighborKey)) {
+                queue.push(neighbor);
+                visited.add(neighborKey);
+            }
+        });
+    }
+    return false;
 }
 
 function identifyPath(mountain) {
@@ -60,7 +100,18 @@ function identifyPath(mountain) {
     // Find the start
 
     // Traverse from the starts and try to get to the top
-    // Your code here 
+    // Your code here
+    let peak = findPeak(mountain)
+    let starts = findStarts(mountain)
+    let visited = new Set()
+    let output
+    starts.forEach(start =>{
+        if(pathTraversal(start,mountain,visited,peak)){
+            output=start
+        }
+
+    })
+    return output
 }
 
 // Uncomment for local testing
